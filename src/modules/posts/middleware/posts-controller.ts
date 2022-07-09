@@ -24,7 +24,6 @@ export const createNewPost = (req: express.Request, res: express.Response) => {
         posts.push(req.body);
         res.status(200).send(JSON.stringify(SuccessResponse(req.body)));
     } else {
-        console.log('BAD REQUEST');
         res.status(401).send('Error: Bad request');
     }
 }
@@ -65,7 +64,6 @@ export const editPost = (req: express.Request, res: express.Response) => {
         res.status(200).send(JSON.stringify(SuccessResponse(matchingPost)));
     } catch (err) {
         const error = err as Error;
-        console.log('RAN INTO AN ERROR:', error.message);
         res.status(501).send(JSON.stringify(ErrorResponse(501, 'Not your fault, bro. Server malfunction')));
     }
 }
@@ -73,11 +71,9 @@ export const editPost = (req: express.Request, res: express.Response) => {
 export const deletePost = (req: express.Request, res: express.Response) => {
     try {
         const deletedPost = posts.splice((parseInt(req.params.id) - 1), 1);
-        console.log('POSTS', posts);
         res.status(200).send(JSON.stringify(SuccessResponse(deletedPost)));
     } catch (err) {
         const error = err as Error;
-        console.log('RAN INTO AN ERROR:', error.message);
         res.status(501).send(JSON.stringify(ErrorResponse(501, 'Gimme a hug bro. It\'s not your fault, bro. Server malfunction')));
     }
 }
