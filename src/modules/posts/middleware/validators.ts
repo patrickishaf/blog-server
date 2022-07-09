@@ -2,7 +2,7 @@ import { Post } from "../models/post";
 import posts from "../services/posts";
 
 export const validatePostID = (postID: number) => {
-    return postID > 0 && postID <= posts.length;
+    return posts.map((post) => post.id).includes(postID);
 }
 
 export const validateNewPostObject = (newObject: any) => {
