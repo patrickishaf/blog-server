@@ -4,6 +4,7 @@ import ErrorResponse from '../../../app/models/error-response';
 import posts from '../services/posts';
 import { validateNewPostObject, validatePostID } from './validators';
 import users from '../../users/services/users';
+import { Post } from '../models/post';
 
 export const getPosts = (req: express.Request, res: express.Response) => {
     res.status(200).send(JSON.stringify(SuccessResponse(posts)));
@@ -41,14 +42,30 @@ export const getPostAuthor = (req: express.Request, res: express.Response) => {
 export const editPost = (req: express.Request, res: express.Response) => {
     try {
         let matchingPost = posts.filter((post) => post.id === parseInt(req.params.id))[0];
-        let updatedPostData = req.body;
-        console.log('UPDATED POST DATA:', updatedPostData);
-        // 
-        // let copy = Object.assign(matchingPost, ...updatedPostData);
-        // console.log('THE NEW DATA IS:', copy);
-        // res.status(200).send(JSON.stringify(SuccessResponse(copy)));
+        let updatedPostData = req.body as Post;
+        if (updatedPostData.id) {
+            matchingPost.id = updatedPostData.id;
+        }
+        if (updatedPostData.title) {
+            matchingPost.title = updatedPostData.title;
+        }
+        if (updatedPostData.id) {
+            matchingPost.id = updatedPostData.id;
+        }
+        if (updatedPostData.body) {
+            matchingPost.body = updatedPostData.body;
+        }
+        if (updatedPostData.author) {
+            matchingPost.author = updatedPostData.author;
+        }
+        if (updatedPostData.timeCreated) {
+            matchingPost.timeCreated = updatedPostData.timeCreated;
+        }
+        posts[matchingPost.id] = matchingPost;
+        res.status(200).send(JSON.stringify(SuccessResponse(matchingPost)));
     } catch (err) {
         const error = err as Error;
         console.log('RAN INTO AN ERROR:', error.message);
+        res.status(501).send(JSON.stringify(ErrorResponse(501, 'Not your fault, bro. Server malfunction')));
     }
 }

@@ -12,7 +12,7 @@ app.use('/posts', postsRouter);
 app.use('/users', usersRouter);
 
 app.get('/', (req: express.Request, res: express.Response) => {
-    res.send('WELCOME TO THE BLOG');
+    res.send('ENTER THE DRAGON');
 });
 
 app.listen(3000, () => {
