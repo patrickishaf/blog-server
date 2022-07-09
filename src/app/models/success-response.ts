@@ -6,3 +6,12 @@ export default function SuccessResponse(body: any) {
         }
     });
 }
+
+export const SuccessResponseJSON = (body: any) => {
+    return JSON.stringify({
+        success: {
+            statusCode: 200,
+            body
+        }
+    });
+}

@@ -6,3 +6,12 @@ export default function ErrorResponse(code: number, body: any) {
         }
     });
 }
+
+export const ErrorResponseJSON = (code: number, body: any) => {
+    return JSON.stringify({
+        error: {
+            code,
+            body
+        }
+    });
+}
