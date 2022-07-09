@@ -1,5 +1,5 @@
 import express from 'express';
-import { createNewPost, editPost, getPostAuthor, getPosts, getPostWithID } from '../middleware/posts-controller';
+import { createNewPost, deletePost, editPost, getPostAuthor, getPosts, getPostWithID } from '../middleware/posts-controller';
 
 const postsRouter:express.Router = express.Router();
 
@@ -12,5 +12,7 @@ postsRouter.get('/:id/author', getPostAuthor);
 postsRouter.post('/new', createNewPost);
 
 postsRouter.put('/:id', editPost);
+
+postsRouter.delete('/:id', deletePost);
 
 export default postsRouter;
