@@ -1,6 +1,6 @@
 import users from "../../users/services/users";
 import { Post } from "../models/post";
-import comments from "./comments";
+import comments from "../../comments/services/comments";
 
 const posts: Post[] = [
     {
