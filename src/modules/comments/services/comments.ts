@@ -1,17 +1,21 @@
-import { Comment } from "../../posts/models/comment";
+import { Comment } from "../models/comment";
 import users from "../../users/services/users";
 
 function createArrayOfComments(postID: number): Comment[] {
     let array = [];
+    let maxID = postID*6;
+    let minID = maxID - 5;
     let i = 1;
     while (i <= 6) {
         array.push({
+            id: (minID),
             author: users[i - 1].name,
             authorID: users[i - 1].id,
             timeCreated: '11:31am',
             body: 'I absolutely agree',
             postID,
         });
+        minID++;
         i++;
     }
     return array;
