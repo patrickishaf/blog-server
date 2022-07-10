@@ -5,6 +5,7 @@ import posts from '../services/posts';
 import { validateNewPostObject, validatePostID } from './validators';
 import users from '../../users/services/users';
 import { Post } from '../models/post';
+import { getCommentsFromPostID } from '../../comments/middleware/comments-controller';
 
 export const getPosts = (req: express.Request, res: express.Response) => {
     res.status(200).send(JSON.stringify(SuccessResponse(posts)));
@@ -19,15 +20,6 @@ export const getPostWithID = (req: express.Request, res: express.Response) => {
     }
 }
 
-export const createNewPost = (req: express.Request, res: express.Response) => {
-    if (validateNewPostObject(req.body) && !validatePostID(req.body.id)) {
-        posts.push(req.body);
-        res.status(200).send(JSON.stringify(SuccessResponse(req.body)));
-    } else {
-        res.status(401).send('Error: Bad request');
-    }
-}
-
 export const getPostAuthor = (req: express.Request, res: express.Response) => {
     if (validatePostID(parseInt(req.params.id))) {
         const matchingPost = posts.filter((post) => post.id === parseInt(req.params.id))[0];
@@ -35,6 +27,19 @@ export const getPostAuthor = (req: express.Request, res: express.Response) => {
         res.status(200).send(JSON.stringify(SuccessResponse(author)));
     } else {
         res.status(404).send(JSON.stringify(ErrorResponse(404, 'Post Not Found')));
+    }
+}
+
+export const getPostComments = (req: express.Request, res: express.Response) => {
+    getCommentsFromPostID(req, res);
+}
+
+export const createNewPost = (req: express.Request, res: express.Response) => {
+    if (validateNewPostObject(req.body) && !validatePostID(req.body.id)) {
+        posts.push(req.body);
+        res.status(200).send(JSON.stringify(SuccessResponse(req.body)));
+    } else {
+        res.status(401).send('Error: Bad request');
     }
 }
 
