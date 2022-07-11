@@ -5,7 +5,6 @@ import posts from '../services/posts';
 import { validateNewPostObject, validatePostID } from './validators';
 import users from '../../users/services/users';
 import { Post } from '../models/post';
-import { getCommentsFromPostID } from '../../comments/middleware/comments-controller';
 
 export const getPosts = (req: express.Request, res: express.Response) => {
     res.status(200).send(JSON.stringify(SuccessResponse(posts)));
@@ -28,10 +27,6 @@ export const getPostAuthor = (req: express.Request, res: express.Response) => {
     } else {
         res.status(404).send(JSON.stringify(ErrorResponse(404, 'Post Not Found')));
     }
-}
-
-export const getPostComments = (req: express.Request, res: express.Response) => {
-    getCommentsFromPostID(req, res);
 }
 
 export const createNewPost = (req: express.Request, res: express.Response) => {

@@ -1,11 +1,13 @@
 import express from 'express';
+import commentsRouter from './modules/comments/routes/router';
 import postsRouter from './modules/posts/routes/router';
-import testDB from './modules/posts/services/posts-db-driver';
 import usersRouter from './modules/users/routes/router';
 
 const app: express.Application = express();
 
 app.use(express.json());
+
+app.use('/comments', commentsRouter);
 
 app.use('/posts', postsRouter);
 
