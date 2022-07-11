@@ -1,4 +1,5 @@
 import express from 'express';
+import authRouter from './modules/auth/routes/router';
 import commentsRouter from './modules/comments/routes/router';
 import postsRouter from './modules/posts/routes/router';
 import usersRouter from './modules/users/routes/router';
@@ -6,6 +7,8 @@ import usersRouter from './modules/users/routes/router';
 const app: express.Application = express();
 
 app.use(express.json());
+
+app.use('/auth', authRouter);
 
 app.use('/comments', commentsRouter);
 
