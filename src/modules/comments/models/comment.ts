@@ -3,6 +3,7 @@ export interface Comment {
     authorID: number;
     author: string;
     timeCreated: string;
+    timeLastModified?: string;
     body: string;
     postID: number;
 }
