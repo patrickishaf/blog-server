@@ -1,8 +1,9 @@
+import { Comment } from "../../modules/comments/models/comment";
 import { Post } from "../../modules/posts/models/post";
 
-export const queryBuilder = {
+const queryBuilder = {
     createCommentsTable: `CREATE TABLE comments (
-        id INT NOT NULL,
+        id INT NOT NULL AUTO_INCREMENT,
         authorID INT,
         postID INT,
         timeCreated STRING,
@@ -11,6 +12,23 @@ export const queryBuilder = {
         FOREIGN KEY (authorID) REFERENCES users(id),
         FOREIGN KEY (postID) REFERENCES posts(id),
     )`,
+    insertComment(comment: Comment): string {
+        return (
+            `INSERT INTO comments
+            (authorID, postID, timeCreated, body)
+            VALUES
+            (${comment.author}, ${comment.postID}, ${comment.timeCreated}, ${comment.body})`
+        );
+    },
+    readComments(postID: string): string {
+        return `SELECT * FROM comments WHERE postID = ${postID} ORDER BY timeCreated`;
+    },
+    updateComment(data: {id: number, body: string}): string {
+        return `UPDATE comments SET body = ${data.body} WHERE id = ${data.id}`;
+    },
+    deleteComment(id: number): string {
+        return `DELETE FROM comments WHERE id = ${id}`;
+    },
     createPostsTable: `CREATE TABLE posts (
         id INT NOT NULL,
         title STRING,
@@ -28,3 +46,5 @@ export const queryBuilder = {
         PRIMARY KEY (id)
     )`
 }
+
+export default queryBuilder;
