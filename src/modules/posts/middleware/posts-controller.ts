@@ -1,13 +1,13 @@
 import express from 'express';
-import SuccessResponse, { SuccessResponseJSON } from '../../../app/models/success-response';
-import ErrorResponse, { ErrorResponseJSON } from '../../../app/models/error-response';
+import { SuccessResponseJSON } from '../../../app/models/success-response';
+import { ErrorResponseJSON } from '../../../app/models/error-response';
 import posts from '../services/posts';
 import { validateNewPostObject, validatePostID } from './validators';
 import users from '../../users/services/users';
 import { Post } from '../models/post';
 
 export const getPosts = (req: express.Request, res: express.Response) => {
-    res.status(200).send(JSON.stringify(SuccessResponse(posts)));
+    res.status(200).send(SuccessResponseJSON(posts));
 }
 
 export const getPostWithID = (req: express.Request, res: express.Response) => {
