@@ -5,9 +5,15 @@ import posts from '../services/posts';
 import { validateNewPostObject, validatePostID } from './validators';
 import users from '../../users/services/users';
 import { Post } from '../models/post';
+import { readPosts, savePost } from '../services/db-service';
 
 export const getPosts = (req: express.Request, res: express.Response) => {
-    res.status(200).send(SuccessResponseJSON(posts));
+    readPosts().then((snapshot) => {
+        res.status(200).send(SuccessResponseJSON(snapshot));
+    }).catch((error) => {
+        res.status(501).send(ErrorResponseJSON(501, error));
+    })
+    
 }
 
 export const getPostWithID = (req: express.Request, res: express.Response) => {
@@ -35,7 +41,8 @@ export const getPostAuthor = (req: express.Request, res: express.Response) => {
 
 export const createNewPost = (req: express.Request, res: express.Response) => {
     if (validateNewPostObject(req.body) && !validatePostID(req.body.id)) {
-        posts.push(req.body);
+        //posts.push(req.body);
+        savePost(req.body)
         res.status(200).send(SuccessResponseJSON(req.body));
     } else {
         res.status(401).send('Error: Bad request');
