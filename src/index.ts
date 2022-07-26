@@ -1,9 +1,10 @@
+require('dotenv').config();
 import express from 'express';
 import authRouter from './modules/auth/routes/router';
 import commentsRouter from './modules/comments/routes/router';
 import postsRouter from './modules/posts/routes/router';
 import usersRouter from './modules/users/routes/router';
-const cors = require('cors');
+import cors from 'cors';
 
 const app: express.Application = express();
 

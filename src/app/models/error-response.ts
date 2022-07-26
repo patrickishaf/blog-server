@@ -1,16 +1,16 @@
-export default function ErrorResponse(code: number, body: any) {
+export default function ErrorResponse(statusCode: number, body: any) {
     return ({
         error: {
-            code,
+            statusCode,
             body
         }
     });
 }
 
-export const ErrorResponseJSON = (code: number, body: any) => {
+export const ErrorResponseJSON = (statusCode: number, body: any) => {
     return JSON.stringify({
         error: {
-            code,
+            statusCode,
             body
         }
     });
