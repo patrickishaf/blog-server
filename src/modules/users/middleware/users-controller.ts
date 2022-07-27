@@ -1,6 +1,6 @@
 import express from 'express';
-import { SuccessResponseJSON } from '../../../app/models/success-response';
-import { ErrorResponseJSON } from '../../../app/models/error-response';
+import { SuccessResponseJSON } from '../../../app/response-types/success-response';
+import { ErrorResponseJSON } from '../../../app/response-types/error-response';
 import users from '../../users/services/users';
 import { validateNewUserObject, validateUserID } from './validators';
 import posts from '../../posts/services/posts';
