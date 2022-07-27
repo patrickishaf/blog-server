@@ -3,7 +3,7 @@ import firestore from "../../../app/config/firebase";
 import AuthState from "../models/auth-state";
 
 const getUserWithEmail = async (email: string): Promise<QuerySnapshot<DocumentData>> => {
-    try { 
+    try {
         const users = collection(firestore, 'users');
         const q = query(users, where('email', '==', email));
         const snapshot = await getDocs(q);
