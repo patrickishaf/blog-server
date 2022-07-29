@@ -37,4 +37,15 @@ export const register = async (req: express.Request, res: express.Response) => {
     }
 }
 
+export const getAuthState = async(req:express.Request, res: express.Response) => {
+    const cookie = req.cookies;
+    console.log('THE COOKIES ARE', cookie);
+    const authState = await userExists('uiehui');
+    if (authState.status) {
+        res.status(200).json(SuccessResponse(authState))
+    } else {
+        res.status(400).json(ErrorResponse(400, 'user is not logged in'))
+    }
+}
+
 export const verifyAuthToken = (req: express.Request, res: express.Response) => {}
