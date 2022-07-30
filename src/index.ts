@@ -9,7 +9,7 @@ import cors from 'cors';
 const app: express.Application = express();
 
 app.use(cors({
-    origin: false,
+    origin: true,
     methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE']
 }));
 
