@@ -6,14 +6,16 @@ import { validateNewPostObject, validatePostID } from './validators';
 import users from '../../users/services/users';
 import { Post } from '../models/post';
 import { readPosts, savePost } from '../services/db-service';
+import { DocumentData, DocumentSnapshot, QueryDocumentSnapshot, QuerySnapshot } from 'firebase/firestore';
 
 export const getPosts = (req: express.Request, res: express.Response) => {
-    readPosts().then((snapshot) => {
-        res.status(200).send(SuccessResponseJSON(snapshot));
+    readPosts().then((data) => {
+        let docs = data as Array<QueryDocumentSnapshot>;
+        let posts = docs.map(doc => doc.data());
+        res.status(200).send(SuccessResponseJSON(posts));
     }).catch((error) => {
         res.status(501).send(ErrorResponseJSON(501, error));
     });
-    
 }
 
 export const getPostWithID = (req: express.Request, res: express.Response) => {

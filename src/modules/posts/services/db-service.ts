@@ -19,11 +19,10 @@ export const readPosts = () => {
     return new Promise((resolve, reject) => {
         const postsCollection = collection(firestore, 'posts');
         getDocs(postsCollection).then((snapshot) => {
-            console.log('SNAPSHOT:', snapshot);
             resolve(snapshot.docs);
         }).catch((error) => {
             reject(error);
-        })
+        });
     });
 }
 
