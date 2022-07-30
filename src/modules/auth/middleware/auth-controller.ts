@@ -33,7 +33,7 @@ export const register = async (req: express.Request, res: express.Response) => {
         const securePasswordHash = await generateHash(password, process.env.PASSWORD_SALT!);
         const newUser = {id: newUserID, name, email, password: securePasswordHash};
         const response = await createUser(newUser);
-        res.status(200).json(response);
+        res.status(200).json(SuccessResponse(response));
     }
 }
 

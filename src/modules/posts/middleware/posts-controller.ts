@@ -1,5 +1,5 @@
 import express from 'express';
-import { SuccessResponseJSON } from '../../../app/response-types/success-response';
+import SuccessResponse, { SuccessResponseJSON } from '../../../app/response-types/success-response';
 import { ErrorResponseJSON } from '../../../app/response-types/error-response';
 import posts from '../services/posts';
 import { validateNewPostObject, validatePostID } from './validators';
@@ -12,7 +12,7 @@ export const getPosts = (req: express.Request, res: express.Response) => {
     readPosts().then((data) => {
         let docs = data as Array<QueryDocumentSnapshot>;
         let posts = docs.map(doc => doc.data());
-        res.status(200).send(SuccessResponseJSON(posts));
+        res.status(200).json(SuccessResponse(posts));
     }).catch((error) => {
         res.status(501).send(ErrorResponseJSON(501, error));
     });
@@ -43,7 +43,6 @@ export const getPostAuthor = (req: express.Request, res: express.Response) => {
 
 export const createNewPost = (req: express.Request, res: express.Response) => {
     if (validateNewPostObject(req.body) && !validatePostID(req.body.id)) {
-        //posts.push(req.body);
         savePost(req.body).then((reference) => {
             res.status(200).send(SuccessResponseJSON(req.body));
         }).catch((err) => {
