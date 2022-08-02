@@ -1,5 +1,6 @@
 require('dotenv').config();
 import express from 'express';
+import session from 'express-session';
 import authRouter from './modules/auth/routes/router';
 import commentsRouter from './modules/comments/routes/router';
 import postsRouter from './modules/posts/routes/router';
@@ -14,6 +15,15 @@ app.use(cors({
 }));
 
 app.use(express.json());
+
+app.use(session({
+    secret: process.env.SESSION_SECRET!,
+    resave: false,
+    saveUninitialized: false,
+    cookie: {
+        maxAge: 36000000
+    }
+}));
 
 app.use('/auth', authRouter);
 
