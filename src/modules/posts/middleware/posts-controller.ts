@@ -6,7 +6,7 @@ import { validateNewPostObject, validatePostID } from './validators';
 import users from '../../users/services/users';
 import { Post } from '../models/post';
 import { readPosts, savePost } from '../services/db-service';
-import { DocumentData, DocumentSnapshot, QueryDocumentSnapshot, QuerySnapshot } from 'firebase/firestore';
+import { QueryDocumentSnapshot } from 'firebase/firestore';
 
 export const getPosts = (req: express.Request, res: express.Response) => {
     readPosts().then((data) => {
