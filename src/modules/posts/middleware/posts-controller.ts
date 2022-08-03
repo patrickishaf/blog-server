@@ -10,7 +10,6 @@ import { QueryDocumentSnapshot } from 'firebase/firestore';
 
 export const getPosts = (req: express.Request, res: express.Response) => {
     readPosts().then((data) => {
-        console.log('THE POSTS ARE:', data);
         let docs = data as Array<QueryDocumentSnapshot>;
         let posts = docs.map(doc => doc.data());
         res.setHeader('Content-Type', 'application/json');

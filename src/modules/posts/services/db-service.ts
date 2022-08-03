@@ -6,10 +6,8 @@ export const savePost = (post: Post) => {
     return new Promise((resolve, reject) => {
         const first = doc(firestore, `posts/${post.title}`);
         setDoc(first, post).then((reference) => {
-            console.log('SET THE DOC SUCCESSFULLY. REFERENCE', reference);
             resolve(reference)
         }).catch((error) => {
-            console.log('ERROR:', error);
             reject(error);
         });
     });
