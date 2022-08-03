@@ -38,14 +38,29 @@ export const register = async (req: express.Request, res: express.Response) => {
 }
 
 export const getAuthState = async(req:express.Request, res: express.Response) => {
-    const cookie = req.cookies;
-    console.log('THE COOKIES ARE', cookie);
-    const authState = await userExists('uiehui');
-    if (authState.status) {
-        res.status(200).json(SuccessResponse(authState))
-    } else {
-        res.status(400).json(ErrorResponse(400, 'user is not logged in'))
+    try {
+        const session = req.session as any;
+        // const authState = await userExists('uiehui');
+        // if (authState.status) {
+        //     res.status(200).json(SuccessResponse(authState))
+        // } else {
+        //     res.status(400).json(ErrorResponse(400, 'user is not logged in'))
+        // }
+        if (session.user) {
+            res.status(200).json(SuccessResponse(session));
+        } else {
+            res.status(501).json(ErrorResponse(501, 'this user is not authenticated'));
+        }
+        // console.log('USER SESSION:', session);
+    } catch (err) {
+        res.status(500).json(ErrorResponse(500, 'unable to check auth state'));
     }
 }
 
-export const verifyAuthToken = (req: express.Request, res: express.Response) => {}
+export const logout = async (req: express.Request, res: express.Response) => {
+    req.session.destroy(err => {
+        if (err) res.status(501).json(ErrorResponse(501, 'Unable to log out'));
+    });
+    await req.session.save()
+    req.session.regenerate(err => {});
+}

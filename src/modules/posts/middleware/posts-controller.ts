@@ -10,8 +10,11 @@ import { QueryDocumentSnapshot } from 'firebase/firestore';
 
 export const getPosts = (req: express.Request, res: express.Response) => {
     readPosts().then((data) => {
+        console.log('THE POSTS ARE:', data);
         let docs = data as Array<QueryDocumentSnapshot>;
         let posts = docs.map(doc => doc.data());
+        res.setHeader('Content-Type', 'application/json');
+        res.set('Accept', 'application/json');
         res.status(200).json(SuccessResponse(posts));
     }).catch((error) => {
         res.status(501).send(ErrorResponseJSON(501, error));
