@@ -8,6 +8,7 @@ import { Post } from '../models/post';
 import { readPosts, readPostsOrderedByDate, readPostWithID, savePost } from '../services/db-service';
 import { doc, QueryDocumentSnapshot } from 'firebase/firestore';
 import { getUTCDateFormat } from '../services/date-parser';
+import { generateRandomID } from '../../../app/utils/generate-random-ID';
 
 export const getPosts = (req: express.Request, res: express.Response) => {
     readPostsOrderedByDate().then((data) => {
@@ -22,7 +23,7 @@ export const getPosts = (req: express.Request, res: express.Response) => {
 }
 
 export const getPostWithID = (req: express.Request, res: express.Response) => {
-    readPostWithID(parseInt(req.params.id)).then((data) => {
+    readPostWithID(req.params.id).then((data) => {
         const docs = data as Array<QueryDocumentSnapshot>;
         const posts = docs.map(doc => doc.data());
         res.set('Content-Type', 'application/json');
@@ -51,7 +52,9 @@ export const createNewPost = async (req: express.Request, res: express.Response)
     if (validateNewPostObject(req.body) && !validatePostID(req.body.id)) {
         try {
             const timeCreated = Date.now();
-            const newPostBody = { ...req.body, timeCreated };
+            const postID = generateRandomID();
+            console.log('THE TYPE OF THIS POST ID IS:', typeof postID);
+            const newPostBody = { ...req.body, timeCreated, id: postID };
             const ref = await savePost(newPostBody);
             console.log('THE REFERENCE OBJECT IS:', ref);
             res.status(200).send(SuccessResponseJSON({

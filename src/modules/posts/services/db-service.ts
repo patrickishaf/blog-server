@@ -36,11 +36,12 @@ export const readPostsOrderedByDate = () => {
     });
 }
 
-export const readPostWithID = (id: number) => {
+export const readPostWithID = (id: string) => {
     return new Promise((resolve, reject) => {
         const postsRef = collection(db, 'posts');
         const q = query(postsRef, where('id', '==', id));
         getDocs(q).then((snapshot) => {
+            console.log('THE MATCHING POST IS:', snapshot.docs);
             resolve(snapshot.docs);
         }).catch((err) => {
             reject(err);
