@@ -9,3 +9,12 @@ export interface Post {
     timeCreated: string;
     comments?: Comment[];
 }
+
+export interface DatedPost {
+    id: number;
+    title: string;
+    body: string;
+    author: User;
+    timeCreated: number;
+    comments?: Comment[];
+}

@@ -1,17 +1,18 @@
 import express from 'express';
 import SuccessResponse, { SuccessResponseJSON } from '../../../app/response-types/success-response';
-import { ErrorResponseJSON } from '../../../app/response-types/error-response';
+import ErrorResponse, { ErrorResponseJSON } from '../../../app/response-types/error-response';
 import posts from '../services/posts';
 import { validateNewPostObject, validatePostID } from './validators';
 import users from '../../users/services/users';
 import { Post } from '../models/post';
-import { readPosts, savePost } from '../services/db-service';
-import { QueryDocumentSnapshot } from 'firebase/firestore';
+import { readPosts, readPostsOrderedByDate, readPostWithID, savePost } from '../services/db-service';
+import { doc, QueryDocumentSnapshot } from 'firebase/firestore';
+import { getUTCDateFormat } from '../services/date-parser';
 
 export const getPosts = (req: express.Request, res: express.Response) => {
-    readPosts().then((data) => {
-        let docs = data as Array<QueryDocumentSnapshot>;
-        let posts = docs.map(doc => doc.data());
+    readPostsOrderedByDate().then((data) => {
+        const docs = data as Array<QueryDocumentSnapshot>;
+        const posts = docs.map(doc => doc.data());
         res.setHeader('Content-Type', 'application/json');
         res.set('Accept', 'application/json');
         res.status(200).json(SuccessResponse(posts));
@@ -21,12 +22,15 @@ export const getPosts = (req: express.Request, res: express.Response) => {
 }
 
 export const getPostWithID = (req: express.Request, res: express.Response) => {
-    if (validatePostID(parseInt(req.params.id))) {
-        const result = posts.find((post) => post.id === parseInt(req.params.id));
-        res.status(200).send(SuccessResponseJSON(result));
-    } else {
-        res.status(404).send(ErrorResponseJSON(404, 'Post Not Found'));
-    }
+    readPostWithID(parseInt(req.params.id)).then((data) => {
+        const docs = data as Array<QueryDocumentSnapshot>;
+        const posts = docs.map(doc => doc.data());
+        res.set('Content-Type', 'application/json');
+        res.set('Accept', 'application/json');
+        res.status(200).json(SuccessResponse(posts[0]));
+    }).catch((err) => {
+        res.status(404).json(ErrorResponse(404, 'No post with the matching ID'));
+    });
 }
 
 export const getPostAuthor = (req: express.Request, res: express.Response) => {
@@ -43,13 +47,22 @@ export const getPostAuthor = (req: express.Request, res: express.Response) => {
     }
 }
 
-export const createNewPost = (req: express.Request, res: express.Response) => {
+export const createNewPost = async (req: express.Request, res: express.Response) => {
     if (validateNewPostObject(req.body) && !validatePostID(req.body.id)) {
-        savePost(req.body).then((reference) => {
-            res.status(200).send(SuccessResponseJSON(req.body));
-        }).catch((err) => {
-            res.status(501).send('Server error');
-        })
+        try {
+            const timeCreated = Date.now();
+            const newPostBody = { ...req.body, timeCreated };
+            const ref = await savePost(newPostBody);
+            console.log('THE REFERENCE OBJECT IS:', ref);
+            res.status(200).send(SuccessResponseJSON({
+                ...newPostBody,
+                timestamp: newPostBody.timeCreated,
+                timeCreated: getUTCDateFormat(newPostBody.timeCreated)
+            }));
+        } catch (err) {
+            const error =  err as Error;
+            res.status(501).send('Server error' + error.message);
+        }
     } else {
         res.status(401).send('Error: Bad request');
     }
