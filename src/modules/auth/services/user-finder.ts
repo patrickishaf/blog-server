@@ -1,10 +1,10 @@
 import { collection, DocumentData, getDocs, query, QueryDocumentSnapshot, QuerySnapshot, where } from "firebase/firestore";
-import firestore from "../../../app/config/firebase";
+import db from "../../../app/config/firebase";
 import AuthState from "../models/auth-state";
 
 const getUserWithEmail = async (email: string): Promise<QuerySnapshot<DocumentData>> => {
     try {
-        const users = collection(firestore, 'users');
+        const users = collection(db, 'users');
         const q = query(users, where('email', '==', email));
         const snapshot = await getDocs(q);
         return snapshot;
