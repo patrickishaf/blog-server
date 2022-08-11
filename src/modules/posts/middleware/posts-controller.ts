@@ -12,7 +12,7 @@ import { getUTCDateFormat } from '../services/date-parser';
 export const getPosts = (req: express.Request, res: express.Response) => {
     readPostsOrderedByDate().then((data) => {
         const docs = data as Array<QueryDocumentSnapshot>;
-        const posts = docs.map(doc => doc.data());
+        const posts = docs.map(doc => ({...doc.data(), timestamp: doc.data().timeCreated, timeCreated: getUTCDateFormat(doc.data().timeCreated)}));
         res.setHeader('Content-Type', 'application/json');
         res.set('Accept', 'application/json');
         res.status(200).json(SuccessResponse(posts));
