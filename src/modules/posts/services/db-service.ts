@@ -27,7 +27,7 @@ export const readPosts = () => {
 export const readPostsOrderedByDate = () => {
     return new Promise((resolve, reject) => {
         const postsCollection = collection(db, 'posts');
-        const qry = query(postsCollection, orderBy('timeCreated'));
+        const qry = query(postsCollection, orderBy('timeCreated', 'desc'));
         getDocs(qry).then((snapshot) => {
             resolve(snapshot.docs);
         }).catch((err) => {
