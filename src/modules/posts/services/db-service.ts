@@ -1,5 +1,5 @@
 import db from "../../../app/config/firebase";
-import { collection, deleteDoc, doc, getDocs, setDoc, query, where } from 'firebase/firestore';
+import { collection, deleteDoc, doc, getDocs, setDoc, query, where, orderBy } from 'firebase/firestore';
 import { Post } from "../models/post";
 
 export const savePost = (post: Post) => {
@@ -21,6 +21,18 @@ export const readPosts = () => {
         }).catch((error) => {
             reject(error);
         });
+    });
+}
+
+export const readPostsOrderedByDate = () => {
+    return new Promise((resolve, reject) => {
+        const postsCollection = collection(db, 'posts');
+        const qry = query(postsCollection, orderBy('timeCreated'));
+        getDocs(qry).then((snapshot) => {
+            resolve(snapshot.docs);
+        }).catch((err) => {
+            reject(err);
+        })
     });
 }
 
