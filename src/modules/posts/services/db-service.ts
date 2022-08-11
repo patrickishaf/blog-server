@@ -1,10 +1,10 @@
-import firestore from "../../../app/config/firebase";
-import { collection, deleteDoc, doc, getDocs, setDoc } from 'firebase/firestore';
+import db from "../../../app/config/firebase";
+import { collection, deleteDoc, doc, getDocs, setDoc, query, where } from 'firebase/firestore';
 import { Post } from "../models/post";
 
 export const savePost = (post: Post) => {
     return new Promise((resolve, reject) => {
-        const first = doc(firestore, `posts/${post.title}`);
+        const first = doc(db, `posts/${post.title}`);
         setDoc(first, post).then((reference) => {
             resolve(reference)
         }).catch((error) => {
@@ -15,7 +15,7 @@ export const savePost = (post: Post) => {
 
 export const readPosts = () => {
     return new Promise((resolve, reject) => {
-        const postsCollection = collection(firestore, 'posts');
+        const postsCollection = collection(db, 'posts');
         getDocs(postsCollection).then((snapshot) => {
             resolve(snapshot.docs);
         }).catch((error) => {
@@ -24,9 +24,21 @@ export const readPosts = () => {
     });
 }
 
+export const readPostWithID = (id: number) => {
+    return new Promise((resolve, reject) => {
+        const postsRef = collection(db, 'posts');
+        const q = query(postsRef, where('id', '==', id));
+        getDocs(q).then((snapshot) => {
+            resolve(snapshot.docs);
+        }).catch((err) => {
+            reject(err);
+        })
+    })
+}
+
 export const updatePost = (id: string, updateData: any) => {
     return new Promise((resolve, reject) => {
-        const postRef = doc(firestore, 'posts', id)
+        const postRef = doc(db, 'posts', id)
         setDoc(postRef, updateData, {merge: true}).then((result) => {
             resolve(result);
         }).catch((error) => {
@@ -37,7 +49,7 @@ export const updatePost = (id: string, updateData: any) => {
 
 export const deletePost = (id: string) => {
     return new Promise((resolve, reject) => {
-        const postRef = doc(firestore, 'posts', id);
+        const postRef = doc(db, 'posts', id);
         deleteDoc(postRef).then((result) => {
             resolve(result);
         }).catch((error) => {
