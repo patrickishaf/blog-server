@@ -53,10 +53,8 @@ export const createNewPost = async (req: express.Request, res: express.Response)
         try {
             const timeCreated = Date.now();
             const postID = generateRandomID();
-            console.log('THE TYPE OF THIS POST ID IS:', typeof postID);
-            const newPostBody = { ...req.body, timeCreated, id: postID };
+            const newPostBody = { ...req.body, timeCreated, id: postID, tags: ['development', 'testing'] };
             const ref = await savePost(newPostBody);
-            console.log('THE REFERENCE OBJECT IS:', ref);
             res.status(200).send(SuccessResponseJSON({
                 ...newPostBody,
                 timestamp: newPostBody.timeCreated,

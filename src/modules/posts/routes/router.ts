@@ -10,8 +10,6 @@ postsRouter.get('', getPosts);
 
 postsRouter.get('/:id', getPostWithID);
 
-postsRouter.get('/:id/author', getPostAuthor);
-
 postsRouter.post('/new', createNewPost);
 
 postsRouter.put('/:id', editPost);
