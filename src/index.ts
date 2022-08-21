@@ -6,6 +6,7 @@ import commentsRouter from './modules/comments/routes/router';
 import postsRouter from './modules/posts/routes/router';
 import usersRouter from './modules/users/routes/router';
 import cors from 'cors';
+import sessionConfig from './app/config/session';
 
 const app: express.Application = express();
 
@@ -16,14 +17,7 @@ app.use(cors({
 
 app.use(express.json());
 
-app.use(session({
-    secret: process.env.SESSION_SECRET!,
-    resave: false,
-    saveUninitialized: false,
-    cookie: {
-        maxAge: 36000000
-    }
-}));
+app.use(session(sessionConfig));
 
 app.use('/auth', authRouter);
 
