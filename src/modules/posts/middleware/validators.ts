@@ -1,11 +1,6 @@
 import express, { NextFunction } from 'express'
 import ErrorResponse from '../../../app/response-types/error-response';
 import { Post } from "../models/post";
-import posts from "../services/posts";
-
-export const validatePostID = (postID: number) => {
-    return posts.map((post) => post.id).includes(postID);
-}
 
 export const validateNewPostObject = (newObject: any) => {
     try {

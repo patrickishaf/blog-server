@@ -3,7 +3,6 @@ import { SuccessResponseJSON } from '../../../app/response-types/success-respons
 import { ErrorResponseJSON } from '../../../app/response-types/error-response';
 import users from '../../users/services/users';
 import { validateNewUserObject, validateUserID } from './validators';
-import posts from '../../posts/services/posts';
 import { User } from '../models/user';
 
 export const getUsers = (req: express.Request, res: express.Response) => {
@@ -19,13 +18,13 @@ export const getUserWithID = (req: express.Request, res: express.Response) => {
     }
 }
 
-export const getPostsByUser = (req: express.Request, res: express.Response) => {
-    if (validateUserID(parseInt(req.params.id))) {
-        const postsByUser = posts.filter((post) => post.author.id === parseInt(req.params.id));
-        res.status(200).send(SuccessResponseJSON(postsByUser));
-    } else {
-        res.status(404).send(ErrorResponseJSON(404, 'Post Not Found'));
-    }
+export const getPostsWrittenByUser = (req: express.Request, res: express.Response) => {
+    // if (validateUserID(parseInt(req.params.id))) {
+    //     const postsByUser = posts.filter((post) => post.author.id === parseInt(req.params.id));
+    //     res.status(200).send(SuccessResponseJSON(postsByUser));
+    // } else {
+    //     res.status(404).send(ErrorResponseJSON(404, 'Post Not Found'));
+    // }
 }
 
 export const createNewUser = (req: express.Request, res: express.Response) => {

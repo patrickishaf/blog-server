@@ -1,12 +1,9 @@
 import express from 'express';
 import SuccessResponse, { SuccessResponseJSON } from '../../../app/response-types/success-response';
 import ErrorResponse, { ErrorResponseJSON } from '../../../app/response-types/error-response';
-import posts from '../services/posts';
-import { validateNewPostObject, validatePostID } from './validators';
-import users from '../../users/services/users';
-import { Post } from '../models/post';
-import { readPosts, readPostsOrderedByDate, readPostWithID, savePost } from '../services/db-service';
-import { doc, QueryDocumentSnapshot } from 'firebase/firestore';
+import { validateNewPostObject } from './validators';
+import { readPostsOrderedByDate, readPostWithID, createPost, updatePost } from '../services/db-service';
+import { QueryDocumentSnapshot } from 'firebase/firestore';
 import { getUTCDateFormat } from '../services/date-parser';
 import { generateRandomID } from '../../../app/utils/generate-random-ID';
 
@@ -34,27 +31,13 @@ export const getPostWithID = (req: express.Request, res: express.Response) => {
     });
 }
 
-export const getPostAuthor = (req: express.Request, res: express.Response) => {
-    if (validatePostID(parseInt(req.params.id))) {
-        const matchingPost = posts.find((post) => post.id === parseInt(req.params.id));
-        if (matchingPost === undefined || matchingPost === null) {
-            res.status(404).send(ErrorResponseJSON(404, 'Post Not Found'));
-        } else {
-            const author = users.filter((user) => user.id === matchingPost.author.id);
-            res.status(200).send(SuccessResponseJSON(author));
-        }
-    } else {
-        res.status(404).send(ErrorResponseJSON(404, 'Post Not Found'));
-    }
-}
-
 export const createNewPost = async (req: express.Request, res: express.Response) => {
-    if (validateNewPostObject(req.body) && !validatePostID(req.body.id)) {
+    if (validateNewPostObject(req.body)) {
         try {
             const timeCreated = Date.now();
             const postID = generateRandomID();
             const newPostBody = { ...req.body, timeCreated, id: postID, tags: ['development', 'testing'] };
-            const ref = await savePost(newPostBody);
+            const ref = await createPost(newPostBody);
             res.status(200).send(SuccessResponseJSON({
                 ...newPostBody,
                 timestamp: newPostBody.timeCreated,
@@ -69,23 +52,22 @@ export const createNewPost = async (req: express.Request, res: express.Response)
     }
 }
 
-export const editPost = (req: express.Request, res: express.Response) => {
+export const editPost = async (req: express.Request, res: express.Response) => {
     try {
-        let matchingPost = posts.find((post) => post.id === parseInt(req.params.id)) as Post;
-        let updatedPostData = req.body;
-        const editedPost = Object.assign(matchingPost, updatedPostData, {id: req.params.id});
-        posts[editedPost.id] = editedPost;
-        res.status(200).send(SuccessResponseJSON(editedPost));
+        let { id } = req.body;
+        delete req.body.id;
+        const reference = await updatePost(id, req.body);
+        res.status(200).json(SuccessResponse(reference));
     } catch (err) {
-        res.status(501).send(ErrorResponseJSON(501, 'Not your fault, bro. Server malfunction'));
+        res.status(501).json(ErrorResponse(501, 'Ran into a server error'));
     }
 }
 
 export const deletePost = (req: express.Request, res: express.Response) => {
-    try {
-        const deletedPost = posts.splice((parseInt(req.params.id) - 1), 1);
-        res.status(200).send(SuccessResponseJSON(deletedPost));
-    } catch (err) {
-        res.status(501).send(ErrorResponseJSON(501, 'Gimme a hug bro. It\'s not your fault, bro. Server malfunction'));
-    }
+    // try {
+    //     const deletedPost = posts.splice((parseInt(req.params.id) - 1), 1);
+    //     res.status(200).send(SuccessResponseJSON(deletedPost));
+    // } catch (err) {
+    //     res.status(501).send(ErrorResponseJSON(501, 'Gimme a hug bro. It\'s not your fault, bro. Server malfunction'));
+    // }
 }
