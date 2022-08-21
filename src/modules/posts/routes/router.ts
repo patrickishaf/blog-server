@@ -4,7 +4,7 @@ import { createNewPost, deletePost, editPost, getPosts, getPostWithID } from '..
 
 const postsRouter:express.Router = express.Router();
 
-postsRouter.use(ensureClientAuth);
+// postsRouter.use(ensureClientAuth);
 
 postsRouter.get('', getPosts);
 
