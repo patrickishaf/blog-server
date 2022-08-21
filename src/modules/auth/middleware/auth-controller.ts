@@ -13,7 +13,12 @@ export const login = async (req: express.Request, res: express.Response) => {
     if (authState.status) {
         if (await passwordsMatch(password, authState.data.password)) {
             // TODO: create a session for the user
-            res.setHeader('Set-Cookie', [`userID:${authState.data.id}`]);
+            (req.session as any).userID = authState.data.id;
+            (req.session.cookie as any).userID = authState.data.id;
+            req.session.save();
+            console.log('THE SESSION AFTER SAVING IS ', req.session);
+            res.cookie('authstate', email);
+            // res.setHeader('Set-Cookie', [`userID:${authState.data.id}`]);
             res.status(200).json(SuccessResponse(authState));
         } else {
             res.status(406).json(ErrorResponse(406, 'your password is incorrect'));
@@ -43,10 +48,12 @@ export const register = async (req: express.Request, res: express.Response) => {
     }
 }
 
-export const getAuthState = async(req:express.Request, res: express.Response) => {
+export const getAuthState = async(req: express.Request, res: express.Response) => {
     try {
         const session = req.session as any;
-        if (session.id) {
+        console.log('THE REQUEST SESSION IS: ', req.session);
+        if (req.session.userID) {
+            console.log('THE EMAIL OF THIS SESSION IS ', req.session.email);
             res.status(200).json(SuccessResponse(session));
         } else {
             res.status(501).json(ErrorResponse(501, 'this user is not authenticated'));
