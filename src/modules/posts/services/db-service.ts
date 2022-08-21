@@ -2,7 +2,7 @@ import db from "../../../app/config/firebase";
 import { collection, deleteDoc, doc, getDocs, setDoc, query, where, orderBy } from 'firebase/firestore';
 import { Post } from "../models/post";
 
-export const savePost = (post: Post) => {
+export const createPost = (post: Post) => {
     return new Promise((resolve, reject) => {
         const first = doc(db, `posts/${post.title}`);
         setDoc(first, post).then((reference) => {
