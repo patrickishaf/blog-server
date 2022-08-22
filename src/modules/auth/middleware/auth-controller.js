@@ -7,17 +7,17 @@ import generateHash from '../services/generate-hash';
 import passwordsMatch from '../services/password-matcher';
 import { userExists } from '../services/user-finder';
 
-export const login = async (req: express.Request, res: express.Response) => {
+export const login = async (req, res) => {
     const { email, password } = req.body;
     const authState = await userExists(email);
     if (authState.status) {
         if (await passwordsMatch(password, authState.data.password)) {
+            console.log('AUTHSTATE ID IS: ', authState.data.id);
+            console.log('AUTHSTATE PASSWORD IS: ', authState.data.password);
             // TODO: create a session for the user
-            (req.session as any).userID = authState.data.id;
-            (req.session.cookie as any).userID = authState.data.id;
+            req.session.user = authState.data.id;
             req.session.save();
             console.log('THE SESSION AFTER SAVING IS ', req.session);
-            res.cookie('authstate', email);
             // res.setHeader('Set-Cookie', [`userID:${authState.data.id}`]);
             res.status(200).json(SuccessResponse(authState));
         } else {
@@ -28,7 +28,7 @@ export const login = async (req: express.Request, res: express.Response) => {
     }
 }
 
-export const register = async (req: express.Request, res: express.Response) => {
+export const register = async (req, res) => {
     const { name, email, password } = req.body;
     const userAuthState = await userExists(email);
     if (userAuthState.status) {
@@ -36,7 +36,7 @@ export const register = async (req: express.Request, res: express.Response) => {
     } else {
         try {
             const newUserID = createID();
-            const securePasswordHash = await generateHash(password, process.env.PASSWORD_SALT!);
+            const securePasswordHash = await generateHash(password, process.env.PASSWORD_SALT);
             const newUser = { id: newUserID, name, email, password: securePasswordHash };
             const response = await saveUser(newUser);
             req.session.id = newUserID;
@@ -48,13 +48,12 @@ export const register = async (req: express.Request, res: express.Response) => {
     }
 }
 
-export const getAuthState = async(req: express.Request, res: express.Response) => {
+export const getAuthState = async(req, res) => {
     try {
-        const session = req.session as any;
         console.log('THE REQUEST SESSION IS: ', req.session);
-        if (req.session.userID) {
-            console.log('THE EMAIL OF THIS SESSION IS ', req.session.email);
-            res.status(200).json(SuccessResponse(session));
+        if (req.session.user) {
+            console.log('THE USER OF THIS SESSION IS ', req.session.user);
+            res.status(200).json(SuccessResponse(req.session));
         } else {
             res.status(501).json(ErrorResponse(501, 'this user is not authenticated'));
         }
@@ -63,7 +62,7 @@ export const getAuthState = async(req: express.Request, res: express.Response) =
     }
 }
 
-export const logout = async (req: express.Request, res: express.Response) => {
+export const logout = async (req, res) => {
     req.session.destroy(err => {
         if (err) res.status(501).json(ErrorResponse(501, 'Unable to log out'));
     });
