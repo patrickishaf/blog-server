@@ -6,6 +6,7 @@ import { saveUser } from '../services/save-user';
 import generateHash from '../services/generate-hash';
 import passwordsMatch from '../services/password-matcher';
 import { userExists } from '../services/user-finder';
+import jsonwebtoken from 'jsonwebtoken';
 
 export const login = async (req, res) => {
     const { email, password } = req.body;
@@ -37,28 +38,14 @@ export const register = async (req, res) => {
         try {
             const newUserID = createID();
             const securePasswordHash = await generateHash(password, process.env.PASSWORD_SALT);
-            const newUser = { id: newUserID, name, email, password: securePasswordHash };
+            const newUser = { id: newUserID, name, email, password: securePasswordHash, iat: Math.floor(Date.now() / 1000) };
+            const token = jsonwebtoken.sign(newUser, process.env.SIGNING_SECRET, { expiresIn: '30 days' });
             const response = await saveUser(newUser);
-            req.session.id = newUserID;
-            await req.session.save();
-            res.status(200).json(SuccessResponse(response));
+            res.setHeader('Authorization', `Bearer ${token}`).status(200).json(SuccessResponse(response));
         } catch (err) {
+            console.log('REGISTRATION ERROR ', err);
             res.status(501).json(ErrorResponse(501, 'some server error'));
         }
-    }
-}
-
-export const getAuthState = async(req, res) => {
-    try {
-        console.log('THE REQUEST SESSION IS: ', req.session);
-        if (req.session.user) {
-            console.log('THE USER OF THIS SESSION IS ', req.session.user);
-            res.status(200).json(SuccessResponse(req.session));
-        } else {
-            res.status(501).json(ErrorResponse(501, 'this user is not authenticated'));
-        }
-    } catch (err) {
-        res.status(500).json(ErrorResponse(500, 'unable to check auth state'));
     }
 }
 

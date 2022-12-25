@@ -4,7 +4,7 @@ let RedisStore = require("connect-redis")(session);
 
 const sessionConfig = {
     // store: new RedisStore({ client: redisClient }),
-    secret: process.env.SESSION_SECRET!,
+    secret: process.env.SIGNING_SECRET!,
     resave: false,
     saveUninitialized: false,
     cookie: {

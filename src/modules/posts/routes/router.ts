@@ -1,10 +1,10 @@
 import express from 'express';
-import ensureClientAuth from '../../auth/middleware/client-auth';
+import { authorizeJsonWebToken } from '../../auth/middleware/client-auth';
 import { createNewPost, deletePost, editPost, getPosts, getPostWithID } from '../middleware/posts-controller';
 
 const postsRouter:express.Router = express.Router();
 
-// postsRouter.use(ensureClientAuth);
+postsRouter.use(authorizeJsonWebToken);
 
 postsRouter.get('', getPosts);
 
